@@ -8,6 +8,11 @@ build/
 dist/
 *.spec
 
+# 本地测试产物
+pet_err.log
+pet_out.log
+pet_screenshot.png
+
 # Rust / Tauri
 target/
 node_modules/
