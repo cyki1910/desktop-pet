@@ -27,6 +27,8 @@ jobs:
 
       - name: 安装 Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
 
       - name: Rust 编译缓存
         uses: swatinem/rust-cache@v2
@@ -37,14 +39,14 @@ jobs:
         run: npm install
         working-directory: tauri
 
-      - name: 打包 .app
-        run: npx tauri build
+      - name: 打包 .app（Universal：同时支持 Apple 芯片与 Intel）
+        run: npx tauri build --target universal-apple-darwin
         working-directory: tauri
 
       - name: 上传成品（.app）
         uses: actions/upload-artifact@v4
         with:
           name: desktop-pet-macos
-          path: tauri/src-tauri/target/release/bundle/macos/*.app
+          path: tauri/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app
           path-separator: '/'
           if-no-files-found: error
