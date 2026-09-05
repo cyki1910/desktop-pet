@@ -9,11 +9,11 @@ echo ========================================
 echo.
 
 REM ---- 1. 仓库地址：改成你自己的 ----
-set "REPO=https://github.com/你的用户名/桌宠.git"
-REM 示例: https://github.com/zhangsan/zhuochong.git
+set "REPO=https://github.com/cyki1910/desktop-pet.git"
+REM 示例: https://github.com/cyki1910/desktop-pet.git
 REM       或 SSH:  git@github.com:zhangsan/zhuochong.git
 
-if "%REPO%"=="https://github.com/你的用户名/桌宠.git" (
+if "%REPO%"=="https://github.com/你的用户名/desktop-pet.git" (
     echo [提示] 请先用记事本打开本文件，把顶部 REPO= 改成你的仓库地址。
     echo 还没建仓库？先在 GitHub 网页点 New repository 建一个空仓库，再回来改。
     echo.
