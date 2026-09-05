@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"桌宠窗口能力：拖动与退出","local":true,"windows":["main"],"permissions":["core:default","core:window:allow-start-dragging","core:window:allow-destroy"]}}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { margin: 0; padding: 0; }
+    html, body {
+      background: transparent;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: default;
+    }
+    #pet {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    #petImg {
+      width: 96%;
+      pointer-events: auto;
+    }
+    /* 待机：轻微上下浮动 */
+    @keyframes idleFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+    /* 点击：squash & stretch 弹跳 */
+    @keyframes bounce {
+      0%   { transform: scale(1, 1);     }
+      20%  { transform: scale(1.15, .85);}
+      40%  { transform: scale(.9, 1.15); }
+      60%  { transform: scale(1.05, .95);}
+      80%  { transform: scale(.97, 1.03);}
+      100% { transform: scale(1, 1);     }
+    }
+    .idle      { animation: idleFloat 3s ease-in-out infinite; }
+    .bouncing  { animation: bounce .5s ease-out; }
+  </style>
+</head>
+<body>
+  <div id="pet">
+    <img id="petImg" src="pet_big.png" alt="小熊" draggable="false" />
+  </div>
+
+  <script>
+    const { getCurrentWindow } = window.__TAURI__.window;
+    const { invoke } = window.__TAURI__.core;
+    const pet = document.getElementById('petImg');
+    const win = getCurrentWindow();
+
+    // ---------- 点击弹跳 / 拖动判定 ----------
+    let downX = 0, downY = 0, moved = false;
+    const CLICK_SLOP = 6; // px，位移超过此值判定为拖动而非点击
+
+    pet.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;      // 只处理左键
+      downX = e.clientX; downY = e.clientY;
+      moved = false;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if ((e.buttons & 1) && !moved) {
+        const dx = Math.abs(e.clientX - downX);
+        const dy = Math.abs(e.clientY - downY);
+        if (dx > CLICK_SLOP || dy > CLICK_SLOP) {
+          moved = true;
+          win.startDragging();          // 交给系统拖动，顺滑跟手
+        }
+      }
+    });
+
+    pet.addEventListener('click', () => {
+      if (moved) return;                // 拖动结束不算点击
+      pet.classList.remove('idle', 'bouncing');
+      void pet.offsetWidth;             // 强制重排以重置动画
+      pet.classList.add('bouncing');
+      setTimeout(() => {
+        pet.classList.remove('bouncing');
+        pet.classList.add('idle');
+      }, 500);
+    });
+
+    // ---------- 右键：退出 ----------
+    pet.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      invoke('quit');
+    });
+
+    // 默认待机浮动
+    pet.classList.add('idle');
+  </script>
+</body>
+</html>

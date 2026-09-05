@@ -1,20 +1,9 @@
 # ============================================================
-# 云端自动打包 macOS 桌宠（GitHub Actions）
-#
-# 作用：只要推送到 GitHub，云端会自动用 Mac 环境：
-#    装 Python → 装 PyInstaller/PySide6 → 打出 桌宠.app
-#  你朋友无需安装任何环境，直接下载成品 .app 双击即用。
-#
-# 触发方式：
-#   1) 手动触发：仓库 Actions 页点 "Run workflow"
-#   2) 打 tag 触发：git tag v1.0 && git push --tags
-#   3) 推送到 main 也会跑
-#
-# 成品下载：
-#   Actions 运行完成后，在本次运行的底部 "Artifacts" 里下载
-#  "desktop-pet-macos"，解压得到 桌宠.app
+# 云端自动打包 macOS 桌宠（Tauri 版）
+# 推送到 GitHub 后自动触发，产物是 ~10MB 的 桌宠.app
+# 成品在 Actions 运行页底部 Artifacts 下载：desktop-pet-macos
 # ============================================================
-name: Build macOS Desktop Pet
+name: Build macOS Desktop Pet (Tauri)
 
 on:
   push:
@@ -24,33 +13,38 @@ on:
 
 jobs:
   build:
-    name: Build 桌宠.app (macOS)
+    name: Build 桌宠.app (macOS, Tauri)
     runs-on: macos-latest
 
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 安装 Python
-        uses: actions/setup-python@v5
+      - name: 安装 Node
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.12'
+          node-version: '22'
 
-      - name: 安装打包依赖
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller PySide6
+      - name: 安装 Rust
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: 打包成 .app
-        run: |
-          pyinstaller --noconfirm --windowed \
-            --name 桌宠 \
-            --add-data "pet_big.png:." \
-            pet.py
+      - name: Rust 编译缓存
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: tauri/src-tauri
+
+      - name: 安装前端依赖
+        run: npm install
+        working-directory: tauri
+
+      - name: 打包 .app
+        run: npx tauri build
+        working-directory: tauri
 
       - name: 上传成品（.app）
         uses: actions/upload-artifact@v4
         with:
           name: desktop-pet-macos
-          path: dist/桌宠.app
+          path: tauri/src-tauri/target/release/bundle/macos/*.app
+          path-separator: '/'
           if-no-files-found: error
