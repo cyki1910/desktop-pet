@@ -20,17 +20,16 @@
       align-items: center;
       justify-content: center;
     }
-    /* 白色贴纸卡片：给简笔画小熊一个白底填充 */
+    /* 镂空版：透明容器，只显示线条，无卡片底 */
     .card {
       width: 92%;
-      background: #ffffff;
-      border-radius: 22px;
-      padding: 10px 8px 6px;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
       box-sizing: border-box;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.16);
       pointer-events: auto;
     }
     #petImg {
@@ -58,7 +57,7 @@
 <body>
   <div id="pet">
     <div class="card" id="card">
-      <img id="petImg" src="pet_big.png" alt="小熊" draggable="false" />
+      <img id="petImg" src="pet_line_big.png" alt="小熊" draggable="false" />
     </div>
   </div>
 

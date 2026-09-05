@@ -12,6 +12,12 @@ dist/
 pet_err.log
 pet_out.log
 pet_screenshot.png
+pet_line_screenshot.png
+pet_line_preview.png
+
+# 图片处理脚本
+make_line.py
+preview_line.py
 
 # Rust / Tauri
 target/
